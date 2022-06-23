@@ -1,4 +1,3 @@
-import { gql, useQuery } from "@apollo/client";
 import { CREATE_CARD, GET_CARDS } from "../types";
 
 export const getAllCards = (payload:any) => (dispatch:any) => {

@@ -1,13 +1,13 @@
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
-import { Form, InputGroup, Stack } from 'react-bootstrap';
+import { Stack } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch } from 'react-redux';
 import { createCard } from '../redux/actions/cards.action';
 
 export function MyVerticallyCenteredModal(props:any) {
-    const [err,setErr]= useState<string>()
+    // const [err,setErr]= useState<string>()
     const [title,setTitle]= useState<string>()
     const [details,setDetails]= useState<string>()
     const [category,setCategory]= useState<string>()
@@ -33,7 +33,8 @@ const [create] = useMutation(CREATE_CARD, {
             onError: ({graphQLErrors,networkError})=>{
                 if (graphQLErrors)
     graphQLErrors.forEach(({ message, locations, path }) =>
-      setErr(message)
+      // setErr(message)
+      console.log(message)
     );
     if (networkError) console.log(`[Network error]: ${networkError}`);
             },

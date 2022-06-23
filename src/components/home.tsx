@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGripLines, faCircleXmark, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 import { gql, useMutation, useQuery } from "@apollo/client"
 import { useDispatch, useSelector } from "react-redux"
-import { createCard, getCards } from "../redux/actions/cards.action"
+import { getCards } from "../redux/actions/cards.action"
 import { MyVerticallyCenteredModal } from "./create_modal"
 import "../css/home.css"
 
@@ -60,7 +60,7 @@ if (networkError) console.log(`[Network error]: ${networkError}`);
     }
   });
 
-  let {error,loading,data}= useQuery(GET_ALL_CARDS)
+  let {data}= useQuery(GET_ALL_CARDS)
 console.log(id)
   useEffect(()=>{
      dispatch(getCards(data?.allCards)as any)

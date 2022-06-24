@@ -1,6 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
 import { useReducer, useState } from 'react';
-import { Stack } from 'react-bootstrap';
+import { Spinner, Stack } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch } from 'react-redux';
@@ -12,7 +12,7 @@ export function MyVerticallyCenteredModal(props:any) {
     const [details,setDetails]= useState<string>()
     const [category,setCategory]= useState<string>()
     const dispatch= useDispatch()
-    // const [render,setRender]= useState(false)
+    const [loading,setLoading]= useState(false)
 
     const CREATE_CARD= gql`
   mutation CreateCard($title: String!, $details: String!, $category: String!) {
@@ -74,10 +74,16 @@ const [create] = useMutation(CREATE_CARD, {
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={async (e)=>{
+            setLoading(true)
             await create();
+            setLoading(false)
             props.onHide();
-            forceUpdate()
-        }}>Create</Button>
+        }}>{loading?
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>:
+          "Create"
+        }</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -10,6 +10,7 @@ import { MyVerticallyCenteredModal } from "./create_modal"
 import "../css/home.css"
 import { getCategories } from "../redux/actions/category.action"
 import { DeleteModal } from "./delete_modal"
+import homeIcon from "../../public/homeIcon.svg"
 
 interface homeProps{}
 
@@ -98,7 +99,7 @@ if (networkError) console.log(`[Network error]: ${networkError}`);
       <Row>
         <Col xs={width} style={{
           backgroundColor:"#3E3D42",
-          marginLeft: width===1?-170:0,
+          marginLeft: width===1?-170:-60,
           minHeight: "100vh",
           color: "white",
           transition: "0.7s",
@@ -148,11 +149,19 @@ if (networkError) console.log(`[Network error]: ${networkError}`);
             </Card.Text>
           </Card.Body>
         </Card>
-
-                ))
+         ))
         }
+        <div style={{
+          position:"absolute",
+          right:"3%",
+          bottom:"3%"
+        }}>
+        <FontAwesomeIcon onClick={() => setModalShow(true)} icon={faSquarePlus} style={{
+          cursor:"pointer"
+          }} size={"3x"} />
+        </div>
         </Col>
-        <FontAwesomeIcon onClick={() => setModalShow(true)} icon={faSquarePlus} style={{marginTop:"-5%",cursor:"pointer"}} size={"3x"} />
+        
         <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}

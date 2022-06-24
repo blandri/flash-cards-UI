@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Form, Spinner } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,6 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
     const navigate= useNavigate()
     const [formState,setFormState]= useState<string>()
     const [error,setError]= useState<string>()
-    const [loading,setLoading]= useState(false)
 
     
         const token= localStorage.getItem("AUTH_TOKEN")
@@ -72,7 +71,7 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
               localStorage.setItem("AUTH_TOKEN",signup.token)
               localStorage.setItem("AUTH_ID",signup.user.id)
               navigate('/home');
-            },
+            }
           });
 
           const [login] = useMutation(LOGIN, {
@@ -100,18 +99,8 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
             display: "flex",
             justifyContent: "center"
         }}>
-        <Form onSubmit={formState==="signup"?async (e)=>{
-          e.preventDefault(); 
-          setLoading(true)
-          await signup()
-          setLoading(false)
-        }:
-        async (e)=>{
-          e.preventDefault(); 
-          setLoading(true)
-          await login()
-          setLoading(false)
-        }
+        <Form onSubmit={formState==="signup"?(e)=>{e.preventDefault(); signup()}:
+        (e)=>{e.preventDefault(); login()}
     } style={{
             width: "30%",
             marginTop: "10%",
@@ -139,18 +128,10 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
             <Form.Check type="checkbox" label="Remember me" />
         </Form.Group>
         <div style={{display:"flex"}}>
-        <Button 
-        disabled={loading}
-        variant="primary" type="submit">
-          {
-            loading?(
-              <Spinner animation="border" role="status" color="white" size='sm'>
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            ):(
-              formState==="signup"?"signup":"login"
-            )
-          }
+        <Button variant="primary" type="submit">
+            {
+                formState==="signup"?"signup":"login"
+            }
         </Button>
         <Form.Text onClick={formState==="signup"?e=>setFormState("login"):e=>setFormState("signup")} style={{
             marginLeft:"20px", cursor:"pointer",color:"#4973FC",

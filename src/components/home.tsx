@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useReducer, useState } from "react"
 import { Button, Card, Col, Container, Row, Stack } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGripLines, faCircleXmark, faSquarePlus } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faSquarePlus, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { gql, useMutation, useQuery } from "@apollo/client"
 import { useDispatch, useSelector } from "react-redux"
 import { getCards } from "../redux/actions/cards.action"
 import { MyVerticallyCenteredModal } from "./create_modal"
 import "../css/home.css"
+import { getCategories } from "../redux/actions/category.action"
+import { DeleteModal } from "./delete_modal"
 
 interface homeProps{}
 
@@ -18,7 +20,19 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const cards= useSelector((state:any)=> state.allCardsReducer)
   const [id,setId]= useState<Number>()
   const [width,setWidth]= useState(1)
+  const categories= useSelector((state:any)=> state.allCategoriesReducer.categories)
+  // const [render,setRender]= useState(false)
+
+
+  const forceUpdateReducer = (i:any) => i + 1
+
+ const useForceUpdate = () => {
+  const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
+  return forceUpdate
+}
   
+const forceUpdate = useForceUpdate()
+
 
   useEffect(()=>{
      const token= localStorage.getItem("AUTH_TOKEN")
@@ -32,6 +46,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
       title
       details
       done
+      categoryName
     }
   }
   `
@@ -39,6 +54,14 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   mutation DeleteCard($deleteCardId: Int!) {
     deleteCard(id: $deleteCardId) {
       title
+    }
+  }
+  `
+  const GET_CATEGORY= gql`
+  query AllCategories {
+    allCategories {
+      name
+      id
     }
   }
   `
@@ -60,29 +83,39 @@ if (networkError) console.log(`[Network error]: ${networkError}`);
     }
   });
 
-  let {data}= useQuery(GET_ALL_CARDS)
-console.log(id)
+  const {data}= useQuery(GET_ALL_CARDS)
+  const cate= useQuery(GET_CATEGORY,{
+    variables:{}
+  })
+  console.log(categories)
   useEffect(()=>{
      dispatch(getCards(data?.allCards)as any)
-  },[dispatch,data?.allCards])
+     dispatch(getCategories(cate?.data?.allCategories) as any)
+  },[dispatch,data?.allCards,cate?.data?.allCategories])
 
    return(
     <Container>
       <Row>
         <Col xs={width} style={{
           backgroundColor:"#3E3D42",
-          marginLeft: width===1?-170:-60,
+          marginLeft: width===1?-170:0,
           minHeight: "100vh",
           color: "white",
-          // display: full===false?"none":"block",
-          transition: "0.7s"
+          transition: "0.7s",
+          paddingTop: "40px",
+          fontFamily: 'Ubuntu'
         }}>
           <h2>Categories</h2>
-          <Stack gap={2}>
-            <div>science</div>
-            <div>workout</div>
+          <Stack gap={2} style={{paddingTop:"10px",fontSize:"130%"}}>
+            {categories?.length>0&&categories?.map(
+              (cat:any)=>(
+                <div>{cat.name}</div>
+              )
+            )}
             <div>
-            <Button onClick={e=>{localStorage.removeItem("AUTH_TOKEN");navigate("/")}} variant="primary">
+            <Button onClick={e=>{localStorage.removeItem("AUTH_TOKEN");navigate("/")}} variant="primary"
+            style={{marginTop:"30px"}}
+            >
            Log out
         </Button>
             </div>
@@ -92,7 +125,7 @@ console.log(id)
         <Col style={{ paddingTop:"40px"}}>
           <FontAwesomeIcon onClick={e=>{
             width===1?setWidth(3):setWidth(1)
-          }} icon={faGripLines} size={"2x"}/>
+          }} icon={width===1?faBars:faXmark} size={"2x"} style={{cursor:"pointer"}} />
         {cards.cards?.length > 0 &&
                 cards.cards.map((card:any) => (
                   <Card
@@ -101,10 +134,11 @@ console.log(id)
           key={card.id}
         >
           <Card.Header style={{display:"flex",justifyContent:"space-between"}}>
-           <p>Category</p> 
-          <FontAwesomeIcon onClick={e=>{
+           <p>{card.categoryName}</p> 
+          <FontAwesomeIcon onClick={async(e)=>{
             setId(card.id);
-            del()
+            await del();
+            forceUpdate();
           }} icon={faCircleXmark} style={{ marginTop:"-2%", marginRight:"-3%", cursor:"pointer"}}/>
           </Card.Header>
           <Card.Body>
@@ -118,11 +152,12 @@ console.log(id)
                 ))
         }
         </Col>
-        <FontAwesomeIcon onClick={() => setModalShow(true)} icon={faSquarePlus} style={{marginTop:"-5%",marginLeft:"48%"}} size={"3x"} />
+        <FontAwesomeIcon onClick={() => setModalShow(true)} icon={faSquarePlus} style={{marginTop:"-5%",cursor:"pointer"}} size={"3x"} />
         <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+      <DeleteModal />
       </Row>
     </Container>
    )

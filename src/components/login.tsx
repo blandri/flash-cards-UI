@@ -68,10 +68,8 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
             },
             onCompleted: ({ signup }) => {
                 console.log(signup)
-              localStorage.setItem("AUTH_TOKEN", JSON.stringify({
-                id: signup.user.id,
-                token: signup.token
-              }));
+              localStorage.setItem("AUTH_TOKEN",signup.token)
+              localStorage.setItem("AUTH_ID",signup.user.id)
               navigate('/home');
             }
           });
@@ -90,10 +88,8 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
             },
             onCompleted: ({ login }) => {
                 console.log(login)
-              localStorage.setItem("AUTH_TOKEN",  JSON.stringify({
-                id: login.user.id,
-                token: login.token
-              }));
+                localStorage.setItem("AUTH_TOKEN",login.token)
+                localStorage.setItem("AUTH_ID",login.user.id)
               navigate('/home');
             }
           });

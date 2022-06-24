@@ -23,7 +23,7 @@ let clientObject: object = {
 
 if (localStorage.getItem("AUTH_TOKEN")) {
 	clientObject = Object.assign(clientObject, {
-		headers: { Authorization: `Bearer ${localStorage.getItem("AUTH_TOKEN")}` },
+		headers: { "Authorization": `Bearer ${localStorage.getItem("AUTH_TOKEN")}` },
 	});
 }
 

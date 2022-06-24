@@ -1,6 +1,6 @@
 import { gql, useMutation } from '@apollo/client';
-import {  useState } from 'react';
-import { Spinner, Stack } from 'react-bootstrap';
+import { useReducer, useState } from 'react';
+import { Stack } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch } from 'react-redux';
@@ -12,7 +12,7 @@ export function MyVerticallyCenteredModal(props:any) {
     const [details,setDetails]= useState<string>()
     const [category,setCategory]= useState<string>()
     const dispatch= useDispatch()
-    const [loading,setLoading]= useState(false)
+    // const [render,setRender]= useState(false)
 
     const CREATE_CARD= gql`
   mutation CreateCard($title: String!, $details: String!, $category: String!) {
@@ -25,14 +25,14 @@ export function MyVerticallyCenteredModal(props:any) {
   }
   `
 
-//   const forceUpdateReducer = (i:any) => i + 1
+  const forceUpdateReducer = (i:any) => i + 1
 
-//  const useForceUpdate = () => {
-//   const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
-//   return forceUpdate
-// }
+ const useForceUpdate = () => {
+  const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
+  return forceUpdate
+}
   
-// const forceUpdate = useForceUpdate()
+const forceUpdate = useForceUpdate()
 
 const [create] = useMutation(CREATE_CARD, {
             variables: {
@@ -73,19 +73,11 @@ const [create] = useMutation(CREATE_CARD, {
         </Stack>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-        disabled={loading}
-        onClick={async (e)=>{
-            setLoading(true)
+        <Button onClick={async (e)=>{
             await create();
-            setLoading(false)
             props.onHide();
-        }}>{loading?
-          <Spinner animation="border" role="status" size='sm'>
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>:
-          "Create"
-        }</Button>
+            forceUpdate()
+        }}>Create</Button>
       </Modal.Footer>
     </Modal>
   );

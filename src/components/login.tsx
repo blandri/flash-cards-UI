@@ -139,10 +139,12 @@ const LoginPage: React.FunctionComponent<loginProps>=():any=>{
             <Form.Check type="checkbox" label="Remember me" />
         </Form.Group>
         <div style={{display:"flex"}}>
-        <Button variant="primary" type="submit">
+        <Button 
+        disabled={loading}
+        variant="primary" type="submit">
           {
             loading?(
-              <Spinner animation="border" role="status" color="white">
+              <Spinner animation="border" role="status" color="white" size='sm'>
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             ):(

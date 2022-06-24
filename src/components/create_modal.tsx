@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
-import { useReducer, useState } from 'react';
+import {  useState } from 'react';
 import { Spinner, Stack } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -25,14 +25,14 @@ export function MyVerticallyCenteredModal(props:any) {
   }
   `
 
-  const forceUpdateReducer = (i:any) => i + 1
+//   const forceUpdateReducer = (i:any) => i + 1
 
- const useForceUpdate = () => {
-  const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
-  return forceUpdate
-}
+//  const useForceUpdate = () => {
+//   const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
+//   return forceUpdate
+// }
   
-const forceUpdate = useForceUpdate()
+// const forceUpdate = useForceUpdate()
 
 const [create] = useMutation(CREATE_CARD, {
             variables: {
@@ -73,13 +73,15 @@ const [create] = useMutation(CREATE_CARD, {
         </Stack>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={async (e)=>{
+        <Button
+        disabled={loading}
+        onClick={async (e)=>{
             setLoading(true)
             await create();
             setLoading(false)
             props.onHide();
         }}>{loading?
-          <Spinner animation="border" role="status">
+          <Spinner animation="border" role="status" size='sm'>
             <span className="visually-hidden">Loading...</span>
           </Spinner>:
           "Create"

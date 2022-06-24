@@ -1,7 +1,7 @@
-import { CREATE_CARD } from "../types"
+import { CREATE_CARD, UPDATE } from "../types"
 
 const initialState ={
-    message:""
+    createMessage:""
 }
 
 export const createCardReducer =(state=initialState,action:{type:string,payload:any})=>{
@@ -9,7 +9,12 @@ export const createCardReducer =(state=initialState,action:{type:string,payload:
         case CREATE_CARD:
              return {
                 ...state,
-                message: action.payload
+                createMessage: action.payload
+             }
+        case UPDATE:
+             return {
+               ...state,
+               updateMessage: action.payload
              }
         default:
             return state

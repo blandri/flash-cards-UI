@@ -1,9 +1,36 @@
+import { gql, useMutation } from '@apollo/client';
 import React, { useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-export const DeleteModal=()=>{
-  const [smShow, setSmShow] = useState(false);
+export const DeleteModal=(props:any)=>{
+    const [loading,setLoading]= useState(false)
+    const id=props.id
+
+    const DELETE_CARD= gql`
+  mutation DeleteCard($deleteCardId: Int!) {
+    deleteCard(id: $deleteCardId) {
+      title
+    }
+  }
+  `
+
+  const [del] = useMutation(DELETE_CARD, {
+    variables: {
+      id
+    },
+    onError: ({graphQLErrors,networkError})=>{
+        if (graphQLErrors)
+graphQLErrors.forEach(({ message, locations, path }) =>
+console.log(message)
+);
+if (networkError) console.log(`[Network error]: ${networkError}`);
+    },
+    onCompleted: ({ del }) => {
+        console.log(del)
+    }
+  });
 
   return (
     <>
@@ -11,9 +38,7 @@ export const DeleteModal=()=>{
         Small modal
       </Button> */}
       <Modal
-        
-        show={smShow}
-        onHide={() => setSmShow(false)}
+        {...props}
         aria-labelledby="example-modal-sizes-title-sm"
       >
         <Modal.Header closeButton>
@@ -22,13 +47,26 @@ export const DeleteModal=()=>{
           </Modal.Title>
         </Modal.Header>
         <Modal.Footer>
-        <Button onClick={() => setSmShow(false)} className="me-2"
+        <Button 
+        disabled={loading}
+        onClick={async () => {
+            setLoading(true)
+            await del();
+            setLoading(false)
+            props.onHide()
+        }} className="me-2"
         style={{
             backgroundColor:"#C92427",
             border:"none"
         }}
         >
-        Delete
+            {
+                loading?
+                <Spinner animation="border" role="status" size='sm'>
+                <span className="visually-hidden">Loading...</span>
+                </Spinner>
+                :"Delete"
+            }
       </Button>
         </Modal.Footer>
       </Modal>

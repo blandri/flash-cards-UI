@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { Stack } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -12,6 +12,7 @@ export function MyVerticallyCenteredModal(props:any) {
     const [details,setDetails]= useState<string>()
     const [category,setCategory]= useState<string>()
     const dispatch= useDispatch()
+    // const [render,setRender]= useState(false)
 
     const CREATE_CARD= gql`
   mutation CreateCard($title: String!, $details: String!, $category: String!) {
@@ -19,10 +20,19 @@ export function MyVerticallyCenteredModal(props:any) {
       id
       title
       details
-      categoryId
+      categoryName
     }
   }
   `
+
+  const forceUpdateReducer = (i:any) => i + 1
+
+ const useForceUpdate = () => {
+  const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
+  return forceUpdate
+}
+  
+const forceUpdate = useForceUpdate()
 
 const [create] = useMutation(CREATE_CARD, {
             variables: {
@@ -38,9 +48,9 @@ const [create] = useMutation(CREATE_CARD, {
     );
     if (networkError) console.log(`[Network error]: ${networkError}`);
             },
-            onCompleted: ({ create }) => {
+            onCompleted: async ({ create }) => {
                 console.log(create.data)
-              dispatch(createCard(create.data) as any)
+              await dispatch(createCard(create.data) as any)
             }
           });
   return (
@@ -63,9 +73,10 @@ const [create] = useMutation(CREATE_CARD, {
         </Stack>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={e=>{
-            create();
-            props.onHide()
+        <Button onClick={async (e)=>{
+            await create();
+            props.onHide();
+            forceUpdate()
         }}>Create</Button>
       </Modal.Footer>
     </Modal>

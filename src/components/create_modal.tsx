@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch } from 'react-redux';
 import { createCard } from '../redux/actions/cards.action';
-import { faCircleXmark, faSquarePlus, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import "../css/create.css"
 

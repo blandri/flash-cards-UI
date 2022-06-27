@@ -14,7 +14,6 @@ import doneIcon from "./doneIcon.svg"
 import { faCircle } from "@fortawesome/free-regular-svg-icons"
 import updateIcon from "./updateIcon.svg"
 import { UpdateModal } from "./update_modal"
-import { Collapse, ListItem } from '@mui/material';
 
 interface homeProps{}
 
@@ -34,7 +33,6 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const [t,setT]=useState<string>()
   const [d,setD]=useState<string>()
   const [c,setC]=useState<string>()
-  const [op,setOp]=useState(false);
 
 //   const forceUpdateReducer = (i:any) => i + 1
 
@@ -148,7 +146,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
             }}>
               <p>Cards</p>
             </div>
-            <div onClick={e=>setOp(true)} style={{
+            <div style={{
                
                background:"#39373d",
                borderRadius:"20px",

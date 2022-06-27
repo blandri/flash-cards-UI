@@ -53,8 +53,8 @@ centered
 </Modal.Header>
 <Modal.Body>
   <Stack gap={3}>
-  <input onChange={e=>setTitle(e.target.value)} type="text"></input>
-  <input onChange={e=>setDetails(e.target.value)} type="text"></input>
+  <input onChange={e=>setTitle(e.target.value)} type="text" placeholder="Title"></input>
+  <input onChange={e=>setDetails(e.target.value)} type="text" placeholder="Details"></input>
   </Stack>
 </Modal.Body>
 <Modal.Footer>

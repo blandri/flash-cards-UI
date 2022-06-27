@@ -14,6 +14,7 @@ import doneIcon from "./doneIcon.svg"
 import { faCircle } from "@fortawesome/free-regular-svg-icons"
 import updateIcon from "./updateIcon.svg"
 import { UpdateModal } from "./update_modal"
+import { Collapse, ListItem } from '@mui/material';
 
 interface homeProps{}
 
@@ -23,7 +24,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const dispatch= useDispatch()
   const cards= useSelector((state:any)=> state.allCardsReducer)
   const [id,setId]= useState<Number>()
-  const [width,setWidth]= useState(1)
+  const [width,setWidth]= useState(3)
   const categories= useSelector((state:any)=> state.allCategoriesReducer.categories)
   // const [render,setRender]= useState(false)
   const [smShow, setSmShow] = useState(false);
@@ -33,6 +34,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const [t,setT]=useState<string>()
   const [d,setD]=useState<string>()
   const [c,setC]=useState<string>()
+  const [op,setOp]=useState(false);
 
 //   const forceUpdateReducer = (i:any) => i + 1
 
@@ -66,6 +68,11 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
     allCategories {
       name
       id
+      cards {
+      title
+      details
+      done
+    }
     }
   }
   `
@@ -80,7 +87,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
 
   const [done]= useMutation(MARK_DONE,{
     variables:{
-      doneId
+      markDoneId: doneId
     },
     onCompleted:(done)=>{
       console.log(done)
@@ -92,7 +99,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const cate= useQuery(GET_CATEGORY,{
     variables:{}
   })
-  console.log(categories)
+  console.log(doneId)
   useEffect(()=>{
      dispatch(getCards(data?.allCards)as any)
      dispatch(getCategories(cate?.data?.allCategories) as any)
@@ -110,16 +117,57 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           paddingTop: "40px",
           fontFamily: 'Ubuntu'
         }}>
-          <h2>Categories</h2>
-          <Stack gap={2} style={{paddingTop:"10px",fontSize:"130%"}}>
-            {categories?.length>0&&categories?.map(
+          <h2 style={{
+            marginLeft:"10px"
+          }}>Dashboard</h2>
+          <Stack gap={2} style={{paddingTop:"10px",
+          fontSize:"130%"
+          }}>
+            <div style={{
+               display:"grid",
+               gridTemplateColumns:"1fr 1fr",
+               background:"#39373d",
+               borderRadius:"20px",
+               height:"40px",
+               paddingLeft:"15px",
+               paddingTop:"4px",
+               width:"80%"
+            }}>
+              <p>Due today</p>
+            </div>
+            <div style={{
+               display:"grid",
+               gridTemplateColumns:"1fr 1fr",
+               background:"#39373d",
+               borderRadius:"20px",
+               padding:"0px",
+               paddingLeft:"15px",
+               paddingTop:"4px",
+               height:"40px",
+               width:"80%"
+            }}>
+              <p>Cards</p>
+            </div>
+            <div onClick={e=>setOp(true)} style={{
+               
+               background:"#39373d",
+               borderRadius:"20px",
+               paddingLeft:"15px",
+               paddingTop:"4px",
+              minHeight:"40px",
+               width:"80%",
+               cursor:"pointer"
+            }}>
+              <p>Categories</p>
+              {categories?.length>0&&categories?.map(
               (cat:any)=>(
-                <div>{cat.name}</div>
+                <p>{cat.name}</p>
               )
             )}
+            </div>
             <div>
             <Button onClick={e=>{localStorage.removeItem("AUTH_TOKEN");navigate("/")}} variant="primary"
-            style={{marginTop:"30px"}}
+            style={{marginTop:"90px"}}
             >
            Log out
         </Button>
@@ -128,13 +176,39 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           
         </Col>
         <Col style={{ paddingTop:"40px"}}>
-          <FontAwesomeIcon onClick={e=>{
+          <Row style={{
+            display: "grid",
+            flexDirection: "column",
+            gridTemplateColumns: "auto auto",
+            padding:0
+          }}>
+            <div style={{
+              paddingLeft:"35px"
+            }}>
+            <FontAwesomeIcon onClick={e=>{
             width===1?setWidth(3):setWidth(1)
-          }} icon={width===1?faBars:faXmark} size={"2x"} style={{cursor:"pointer"}} />
-        {cards.cards?.length > 0 &&
+          }} icon={width===1?faBars:faXmark} color="#3E3D42" size={"2x"} style={{cursor:"pointer"}} />
+            </div>
+            <div>
+            <input type="text" name="search" placeholder="search" style={{
+            border:"solid #3E3D42",
+            width:"200px",
+            borderRadius:"20px",
+            paddingLeft:"15px"
+          }}/>
+            </div>
+          
+          
+          </Row>
+          <Row style={{
+            display:"flex",
+            flexDirection:"column",
+            marginLeft:"23px"
+          }}>
+          {cards.cards?.length > 0 &&
                 cards.cards.map((card:any) => (
                   <Card
-          style={{ width: '50rem', marginTop:"30px",
+          style={{ width: '30rem', marginTop:"50px",padding:0
         }}
           className="mb-2"
           key={card.id}
@@ -145,18 +219,29 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           <FontAwesomeIcon onClick={async(e)=>{
             setId(card.id);
             setSmShow(true)
-          }} icon={faCircleXmark} color={card.done?"rgb(5, 153, 5)":"orange"} style={{ marginTop:"-2%", marginRight:"-3%", cursor:"pointer"}}/>
+          }} icon={faCircleXmark} color={card.done?"rgb(5, 153, 5)":"orange"} style={{ marginTop:"-3.5%", marginRight:"-5%", cursor:"pointer"}}/>
           </Card.Header>
-          <Card.Body>
-            <Card.Title>{card.title}</Card.Title>
+          <Card.Body style={{
+            height: "10%"
+          }}>
+            <Card.Title style={{
+              fontWeight:"700"
+            }}>{card.title}</Card.Title>
             <Card.Text>
               {card.details}
             </Card.Text>
+            
+          </Card.Body>
+          <Card.Footer style={{
+            border:"none",
+            background: "linear-gradient(hsl(180, 5%, 100%),hsl(180, 5%, 92%))",
+            
+          }}>
             <div style={{
               float:"right",
               display:"flex",
               flexDirection:"row",
-              alignItems:"flex-end"
+              alignItems:"flex-end",
             }}>
              <div className="card-text" onClick={() => {
               setUpdateId(card.id)
@@ -170,13 +255,17 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
               paddingRight:"25px",
               cursor:"pointer"
              }}>
+              
              <Card.Text className="card-text" style={{marginBottom: "-2px",paddingRight:"10px"}}>Update</Card.Text>
               <Card.Img src={updateIcon} alt="done" style={{
                 width:"20px",
                 cursor:"pointer"
               }} />
              </div>
-             <div className="card-text"  style={{
+             <div onClick={async e=>{
+              setDoneId(card.id)
+              await done()
+             }} className="card-text"  style={{
               display:"flex",
               cursor:"pointer"
              }}>
@@ -188,25 +277,26 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
               }} />
             ):(
               <FontAwesomeIcon onClick={async()=>{
-                setDoneId(card.id)
-                 await done()
+                
               }} icon={faCircle} size={"lg"} />
             )}
              </div>
             </div>
-          </Card.Body>
+          </Card.Footer>
         </Card>
          ))
         }
-        <div style={{
+         <div style={{
           position:"absolute",
-          right:"3%",
-          bottom:"3%"
+          left: "93%",
+          bottom:"3%",
+          width:"50px"
         }}>
-        <FontAwesomeIcon onClick={() => setModalShow(true)} icon={faSquarePlus} style={{
+        <FontAwesomeIcon color="#3E3D42" onClick={() => setModalShow(true)} icon={faSquarePlus} style={{
           cursor:"pointer"
           }} size={"3x"} />
         </div>
+          </Row>
         </Col>
         
         <MyVerticallyCenteredModal

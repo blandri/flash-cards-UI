@@ -101,6 +101,12 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
       console.log(done)
       dispatch(getCards(data?.allCards)as any)
     },
+    refetchQueries:[
+      {
+        query: GET_ALL_CARDS,
+        
+      }
+    ]
   })
 
   const {data}= useQuery(GET_ALL_CARDS)
@@ -325,6 +331,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
         <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
+        query={GET_ALL_CARDS}
       />
       <UpdateModal 
       title={t}
@@ -333,11 +340,13 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
       id={updateId}
       show={updateShow}
       onHide={() => setUpdateShow(false)}
+      query={GET_ALL_CARDS}
       />
       <DeleteModal 
       id={id}
       show={smShow}
       onHide={() => setSmShow(false)}
+      query={GET_ALL_CARDS}
       />
       </Row>
     </Container>

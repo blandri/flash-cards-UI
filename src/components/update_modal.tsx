@@ -38,7 +38,12 @@ const [update]= useMutation(UPDATE_CARD,{
         console.log(update)
         dispatch(upCard("success") as any)
         
-    }
+    },
+    refetchQueries:[
+      {
+        query: props.query
+      }
+    ]
 })
 
 return  (

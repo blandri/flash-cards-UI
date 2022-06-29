@@ -15,10 +15,10 @@ export const DeleteModal=(props:any)=>{
     }
   }
   `
-
+console.log(id)
   const [del] = useMutation(DELETE_CARD, {
     variables: {
-      id
+      deleteCardId:id
     },
     onError: ({graphQLErrors,networkError})=>{
         if (graphQLErrors)
@@ -29,7 +29,12 @@ if (networkError) console.log(`[Network error]: ${networkError}`);
     },
     onCompleted: ({ del }) => {
         console.log(del)
-    }
+    },
+    refetchQueries:[
+      {
+        query: props.query
+      }
+    ]
   });
 
   return (

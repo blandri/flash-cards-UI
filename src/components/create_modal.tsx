@@ -54,7 +54,13 @@ const [create] = useMutation(CREATE_CARD, {
             onCompleted: async ({ create }) => {
                 console.log(create.data)
               await dispatch(createCard(create.data) as any)
-            }
+              
+            },
+            refetchQueries:[
+              {
+                query: props.query
+              }
+            ]
           });
   return (
     <Modal

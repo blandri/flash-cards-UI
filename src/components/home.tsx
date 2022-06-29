@@ -33,6 +33,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const [t,setT]=useState<string>()
   const [d,setD]=useState<string>()
   const [c,setC]=useState<string>()
+  const [filter,setFilter]= useState<any>()
 
 //   const forceUpdateReducer = (i:any) => i + 1
 
@@ -57,6 +58,15 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
       details
       done
       categoryName
+    }
+  }
+  `
+  const FILTER_CARDS=gql`
+  query AllCards($filter: String) {
+    allCards(filter: $filter) {
+      title
+      details
+      done
     }
   }
   `
@@ -94,6 +104,11 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   })
 
   const {data}= useQuery(GET_ALL_CARDS)
+  const filtered= useQuery(FILTER_CARDS,{
+    variables:{
+       filter
+    }
+  })
   const cate= useQuery(GET_CATEGORY,{
     variables:{}
   })
@@ -173,7 +188,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           </Stack>
           
         </Col>
-        <Col style={{ paddingTop:"40px"}}>
+        <Col style={{ paddingTop:"40px",fontFamily: 'Ubuntu'}}>
           <Row style={{
             display: "grid",
             flexDirection: "column",
@@ -188,12 +203,22 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           }} icon={width===1?faBars:faXmark} color="#3E3D42" size={"2x"} style={{cursor:"pointer"}} />
             </div>
             <div>
-            <input type="text" name="search" placeholder="search" style={{
+            <input onChange={e=>setFilter(e.target.value)} type="text" name="search" placeholder="search" style={{
             border:"solid #3E3D42",
             width:"200px",
             borderRadius:"20px",
             paddingLeft:"15px"
           }}/>
+          <button onClick={()=>{
+           dispatch(getCards(filtered?.data?.allCards)as any)
+          console.log(filtered.data)
+        }
+        } style={{marginLeft:"10px",
+          borderRadius:"20px",background:"rgb(43, 104, 234)",
+          border:"solid rgb(43, 104, 234)",
+          color:"white",
+          cursor:"pointer"
+          }}>GO</button>
             </div>
           
           

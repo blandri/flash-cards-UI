@@ -332,6 +332,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
         show={modalShow}
         onHide={() => setModalShow(false)}
         query={GET_ALL_CARDS}
+        catg={GET_CATEGORY}
       />
       <UpdateModal 
       title={t}

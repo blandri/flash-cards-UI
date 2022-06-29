@@ -59,6 +59,9 @@ const [create] = useMutation(CREATE_CARD, {
             refetchQueries:[
               {
                 query: props.query
+              },
+              {
+                query: props.catg
               }
             ]
           });

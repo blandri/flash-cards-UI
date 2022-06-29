@@ -1,4 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Button, Modal, Spinner, Stack } from "react-bootstrap";
 import { useDispatch } from "react-redux";
@@ -46,19 +48,31 @@ size="md"
 aria-labelledby="contained-modal-title-vcenter"
 centered
 >
-<Modal.Header closeButton>
+<Modal.Header>
   <Modal.Title id="contained-modal-title-vcenter">
   Update Card
   </Modal.Title>
+  <FontAwesomeIcon color='rgb(5, 153, 5)' onClick={e=>props.onHide()} icon={faCircleXmark} style={{
+          marginTop:"-14%",
+          marginRight:"-5%", 
+          cursor:"pointer"
+        }}/>
 </Modal.Header>
 <Modal.Body>
   <Stack gap={3}>
-  <input onChange={e=>setTitle(e.target.value)} type="text" placeholder="Title"></input>
+  <input onChange={e=>setTitle(e.target.value)} type="text" placeholder="Title" style={{ fontWeight:"800"}}></input>
   <input onChange={e=>setDetails(e.target.value)} type="text" placeholder="Details"></input>
   </Stack>
 </Modal.Body>
-<Modal.Footer>
+<Modal.Footer style={{
+          border:"none",
+          background: "linear-gradient(hsl(180, 5%, 100%),hsl(180, 5%, 80%))",
+      }}>
   <Button
+   style={{
+    background:"rgb(5, 153, 5)",
+    border:"rgb(5, 153, 5)"
+  }}
   disabled={loading}
   onClick={async (e)=>{
       setLoading(true)

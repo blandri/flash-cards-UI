@@ -1,19 +1,15 @@
 import React, { useEffect,  useState } from "react"
-import { Button, Card, Col, Container, Row, Stack } from "react-bootstrap"
+import { Button, Col, Container, Row, Stack } from "react-bootstrap"
 import { useNavigate } from "react-router-dom"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCircleXmark, faSquarePlus, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
-import { gql, useMutation, useQuery } from "@apollo/client"
+import { faSquarePlus, faBars, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { gql, useQuery } from "@apollo/client"
 import { useDispatch, useSelector } from "react-redux"
 import { getCards } from "../redux/actions/cards.action"
 import { MyVerticallyCenteredModal } from "./create_modal"
 import "../css/home.css"
 import { getCategories } from "../redux/actions/category.action"
-import { DeleteModal } from "./delete_modal"
-import doneIcon from "./doneIcon.svg"
-import { faCircle } from "@fortawesome/free-regular-svg-icons"
-import updateIcon from "./updateIcon.svg"
-import { UpdateModal } from "./update_modal"
+import CardDisplay from "./card"
 
 interface homeProps{}
 
@@ -22,28 +18,9 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const navigate=useNavigate()
   const dispatch= useDispatch()
   const cards= useSelector((state:any)=> state.allCardsReducer)
-  const [id,setId]= useState<Number>()
   const [width,setWidth]= useState(3)
   const categories= useSelector((state:any)=> state.allCategoriesReducer.categories)
-  // const [render,setRender]= useState(false)
-  const [smShow, setSmShow] = useState(false);
-  const [updateShow,setUpdateShow]=useState(false);
-  const [doneId,setDoneId] = useState<Number>()
-  const [updateId,setUpdateId] = useState<Number>()
-  const [t,setT]=useState<string>()
-  const [d,setD]=useState<string>()
-  const [c,setC]=useState<string>()
   const [filter,setFilter]= useState<any>()
-
-//   const forceUpdateReducer = (i:any) => i + 1
-
-//  const useForceUpdate = () => {
-//   const [, forceUpdate] = useReducer(forceUpdateReducer, 0)
-//   return forceUpdate
-// }
-  
-// const forceUpdate = useForceUpdate()
-
 
   useEffect(()=>{
      const token= localStorage.getItem("AUTH_TOKEN")
@@ -85,30 +62,6 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   }
   `
 
-  const MARK_DONE= gql`
-  mutation MarkDone($markDoneId: Int!) {
-    markDone(id: $markDoneId) {
-      id
-    }
-  }
-  `
-
-  const [done]= useMutation(MARK_DONE,{
-    variables:{
-      markDoneId: doneId
-    },
-    onCompleted:(done)=>{
-      console.log(done)
-      dispatch(getCards(data?.allCards)as any)
-    },
-    refetchQueries:[
-      {
-        query: GET_ALL_CARDS,
-        
-      }
-    ]
-  })
-
   const {data}= useQuery(GET_ALL_CARDS)
   const filtered= useQuery(FILTER_CARDS,{
     variables:{
@@ -118,7 +71,7 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
   const cate= useQuery(GET_CATEGORY,{
     variables:{}
   })
-  console.log(doneId)
+  
   useEffect(()=>{
      dispatch(getCards(data?.allCards)as any)
      dispatch(getCategories(cate?.data?.allCategories) as any)
@@ -174,13 +127,12 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
                paddingLeft:"15px",
                paddingTop:"4px",
               minHeight:"40px",
-               width:"80%",
-               cursor:"pointer"
+               width:"80%"
             }}>
               <p>Categories</p>
               {categories?.length>0&&categories?.map(
               (cat:any)=>(
-                <p>{cat.name}</p>
+                cat.cards?.length>0?(<p>{cat.name}</p>):null
               )
             )}
             </div>
@@ -236,83 +188,14 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
           }}>
           {cards.cards?.length > 0 &&
                 cards.cards.map((card:any) => (
-                  <Card
-          style={{ width: '30rem', marginTop:"50px",padding:0
-        }}
-          className="mb-2"
-          key={card.id}
-          border={card.done?"success":"warning"}
-        >
-          <Card.Header style={{display:"flex",justifyContent:"space-between"}}>
-           <p>{card.categoryName}</p> 
-          <FontAwesomeIcon onClick={async(e)=>{
-            setId(card.id);
-            setSmShow(true)
-          }} icon={faCircleXmark} color={card.done?"rgb(5, 153, 5)":"orange"} style={{ marginTop:"-3.5%", marginRight:"-5%", cursor:"pointer"}}/>
-          </Card.Header>
-          <Card.Body style={{
-            height: "10%"
-          }}>
-            <Card.Title style={{
-              fontWeight:"700"
-            }}>{card.title}</Card.Title>
-            <Card.Text>
-              {card.details}
-            </Card.Text>
-            
-          </Card.Body>
-          <Card.Footer style={{
-            border:"none",
-            background: "linear-gradient(hsl(180, 5%, 100%),hsl(180, 5%, 92%))",
-            
-          }}>
-            <div style={{
-              float:"right",
-              display:"flex",
-              flexDirection:"row",
-              alignItems:"flex-end",
-            }}>
-             <div className="card-text" onClick={() => {
-              setUpdateId(card.id)
-              setT(card.title)
-              setD(card.details)
-              setC(card.categoryName)
-              setUpdateShow(true)
-             }
-            } style={{
-              display:"flex",
-              paddingRight:"25px",
-              cursor:"pointer"
-             }}>
-              
-             <Card.Text className="card-text" style={{marginBottom: "-2px",paddingRight:"10px"}}>Update</Card.Text>
-              <Card.Img src={updateIcon} alt="done" style={{
-                width:"20px",
-                cursor:"pointer"
-              }} />
-             </div>
-             <div onClick={async e=>{
-              setDoneId(card.id)
-              await done()
-             }} className="card-text"  style={{
-              display:"flex",
-              cursor:"pointer"
-             }}>
-             <Card.Text className="card-text"  style={{marginBottom: "-2px",paddingRight:"10px"}}>Done</Card.Text>
-            {card.done?(
-              <Card.Img src={doneIcon} alt="done" style={{
-                width:"20px",
-                cursor:"pointer"
-              }} />
-            ):(
-              <FontAwesomeIcon onClick={async()=>{
-                
-              }} icon={faCircle} size={"lg"} />
-            )}
-             </div>
-            </div>
-          </Card.Footer>
-        </Card>
+                  <CardDisplay
+                  title={card.title}
+                  done={card.done}
+                  details={card.details}
+                  id={card.id}
+                  categoryName={card.categoryName}
+                  query={GET_ALL_CARDS}
+           />
          ))
         }
          <div style={{
@@ -333,21 +216,6 @@ export const HomePage: React.FunctionComponent<homeProps>=():any=>{
         onHide={() => setModalShow(false)}
         query={GET_ALL_CARDS}
         catg={GET_CATEGORY}
-      />
-      <UpdateModal 
-      title={t}
-      details={d}
-      category={c}
-      id={updateId}
-      show={updateShow}
-      onHide={() => setUpdateShow(false)}
-      query={GET_ALL_CARDS}
-      />
-      <DeleteModal 
-      id={id}
-      show={smShow}
-      onHide={() => setSmShow(false)}
-      query={GET_ALL_CARDS}
       />
       </Row>
     </Container>

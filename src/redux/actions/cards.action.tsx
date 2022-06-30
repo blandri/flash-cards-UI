@@ -1,4 +1,4 @@
-import { CREATE_CARD, GET_CARDS } from "../types";
+import { CREATE_CARD, GET_CARDS, UPDATE } from "../types";
 
 export const getAllCards = (payload:any) => (dispatch:any) => {
     dispatch({
@@ -21,3 +21,14 @@ export const getAllCards = (payload:any) => (dispatch:any) => {
       console.log(error)
     }
   };
+
+  export const updateCard = (payload:any) => (dispatch:any) => {
+    dispatch({
+      type: UPDATE,
+      payload,
+    });
+  };
+
+  export const upCard = (data:any) => async (dispatch:any) => {
+    dispatch(updateCard(data))
+    };

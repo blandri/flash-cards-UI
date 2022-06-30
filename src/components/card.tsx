@@ -23,7 +23,8 @@ import { gql, useMutation } from "@apollo/client";
     const [flipped, setFlipped] = React.useState<boolean>(false);
   const [smShow, setSmShow] = useState(false);
   const [updateShow,setUpdateShow]=useState(false);
-  const [doneId,setDoneId] = useState<Number>()
+  const [loading,setLoading]= useState(false)
+
     const handleClick = () => {
       setFlipped(!flipped);
     };
@@ -37,10 +38,7 @@ import { gql, useMutation } from "@apollo/client";
   `
 
   const [donee]= useMutation(MARK_DONE,{
-    variables:{
-      markDoneId: doneId
-    },
-    onCompleted:(done)=>{
+    onCompleted:(donee)=>{
       console.log(done)
     },
     refetchQueries:[
@@ -50,6 +48,16 @@ import { gql, useMutation } from "@apollo/client";
       }
     ]
   })
+
+  const markDone=async (id:number)=>{
+    setLoading(true)
+     await donee({
+        variables:{
+            markDoneId: id
+          },
+     })
+     setLoading(false)
+  }
     return (
         <>
       <React.Fragment>
@@ -100,12 +108,10 @@ import { gql, useMutation } from "@apollo/client";
                 cursor:"pointer"
               }} />
              </div>
-             <div onClick={async e=>{
-              setDoneId(id)
-              await donee()
-             }} className="card-text"  style={{
+             <div onClick={async e=>{markDone(id)}} className="card-text"  style={{
               display:"flex",
-              cursor:"pointer"
+              cursor:"pointer",
+              opacity: loading?"0.4":""
              }}>
              <Card.Text className="card-text"  style={{marginBottom: "-2px",paddingRight:"10px"}}>Done</Card.Text>
             {done?(
@@ -168,12 +174,10 @@ import { gql, useMutation } from "@apollo/client";
                 cursor:"pointer"
               }} />
              </div>
-             <div onClick={async e=>{
-              setDoneId(id)
-              await donee()
-             }} className="card-text"  style={{
+             <div onClick={async e=>{markDone(id)}} className="card-text"  style={{
               display:"flex",
-              cursor:"pointer"
+              cursor:"pointer",
+              opacity: loading?"0.4":""
              }}>
              <Card.Text className="card-text"  style={{marginBottom: "-2px",paddingRight:"10px"}}>Done</Card.Text>
             {done?(

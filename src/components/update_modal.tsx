@@ -58,8 +58,8 @@ centered
   Update Card
   </Modal.Title>
   <FontAwesomeIcon color='rgb(5, 153, 5)' onClick={e=>props.onHide()} icon={faCircleXmark} style={{
-          marginTop:"-14%",
-          marginRight:"-5%", 
+          marginTop:"-10%",
+          marginRight:"-3%", 
           cursor:"pointer"
         }}/>
 </Modal.Header>
